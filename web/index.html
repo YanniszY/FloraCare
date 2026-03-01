@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<header>
+    <link rel="stylesheet" href="style.css">
+    <div class="page-header">
+        <h1>Мои растения</h1>
+        <p>{{ plants|length }} растений</p>
+    </div>
+
+</header>
+
+
+<div class="plants-grid">
+{% for plant in plants %}
+    <div class="card status-{{ plant.status }}">
+        <div class="card-status-bar"></div>
+
+        <div class="card-body">
+            <h2>{{ plant.name }}</h2>
+            <p class="location">📍 {{ plant.location }}</p>
+
+            <div class="water-info">
+                {% if plant.days_until_water <= 0 %}
+                    <span class="badge badge-overdue">Полить сейчас!</span>
+                {% elif plant.days_until_water <= 3 %}
+                    <span class="badge badge-soon">Через {{ plant.days_until_water }} дн.</span>
+                {% else %}
+                    <span class="badge badge-ok">{{ plant.days_until_water }} дней</span>
+                {% endif %}
+            </div>
+
+            <div class="card-actions">
+                <button class="btn-water" onclick="markWatered({{ plant.id }}, this)">
+                    💧 Полил
+                </button>
+                <a href="/plants/{{ plant.id }}" class="btn-detail">Подробнее</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}
