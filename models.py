@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, DateTime
 from datetime import date, datetime
 
-from db import Base
+from database import Base
 
 
 class Plant(Base):
@@ -12,6 +12,8 @@ class Plant(Base):
     location = Column(String)
     water_interval_days = Column(Integer, default=7)
     last_watered = Column(Date, default=date.today)
+
+    action = Column(String)
 
     fertilizer_name = Column(String)
     fertilizer_interval_days = Column(Integer)
@@ -30,3 +32,12 @@ class WateringLog(Base):
     plant_id = Column(Integer, ForeignKey("plants.id"))
     action = Column(String)
     done_at = Column(DateTime, default=datetime.utcnow)
+
+
+class PlantHistory(Base):
+    __tablename__ = "plant_history"
+
+    id = Column(Integer, primary_key=True)
+    plant_id = Column(Integer, ForeignKey("plants.id"))
+    action = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)

@@ -1,45 +1,270 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>FloraCare</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
+<body class="bg-gray-100 min-h-screen p-8">
 
-<header>
-    <link rel="stylesheet" href="style.css">
-    <div class="page-header">
-        <h1>Мои растения</h1>
-        <p>{{ plants|length }} растений</p>
+  <div class="max-w-4xl mx-auto">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">🌿 FloraCare</h1>
+
+      <div class="flex gap-3">
+        <input 
+          id="searchInput"
+          placeholder="Поиск растения..."
+          class="border p-2 rounded-lg">
+
+        <button onclick="searchPlants()"
+          class="bg-gray-700 text-white px-3 py-2 rounded-lg">
+          🔍
+        </button>
+
+        <button onclick="filterNeedsWater()"
+          class="bg-orange-500 text-white px-3 py-2 rounded-lg">
+          💧 Нужно полить
+        </button>
+
+        <button onclick="toggleForm()"
+          class="bg-green-600 text-white px-4 py-2 rounded-lg">
+          + Добавить
+        </button>
+      </div>
     </div>
 
-</header>
 
+    <!-- DASHBOARD -->
+    <div class="grid grid-cols-4 gap-4 mb-8">
 
-<div class="plants-grid">
-{% for plant in plants %}
-    <div class="card status-{{ plant.status }}">
-        <div class="card-status-bar"></div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <p class="text-gray-500">🌿 Всего</p>
+        <p id="statTotal" class="text-2xl font-bold">0</p>
+      </div>
 
-        <div class="card-body">
-            <h2>{{ plant.name }}</h2>
-            <p class="location">📍 {{ plant.location }}</p>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <p class="text-gray-500">💧 Нужно полить</p>
+        <p id="statWater" class="text-2xl font-bold">0</p>
+      </div>
 
-            <div class="water-info">
-                {% if plant.days_until_water <= 0 %}
-                    <span class="badge badge-overdue">Полить сейчас!</span>
-                {% elif plant.days_until_water <= 3 %}
-                    <span class="badge badge-soon">Через {{ plant.days_until_water }} дн.</span>
-                {% else %}
-                    <span class="badge badge-ok">{{ plant.days_until_water }} дней</span>
-                {% endif %}
-            </div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <p class="text-gray-500">📅 Полито сегодня</p>
+        <p id="statToday" class="text-2xl font-bold">0</p>
+      </div>
 
-            <div class="card-actions">
-                <button class="btn-water" onclick="markWatered({{ plant.id }}, this)">
-                    💧 Полил
-                </button>
-                <a href="/plants/{{ plant.id }}" class="btn-detail">Подробнее</a>
-            </div>
-        </div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <p class="text-gray-500">🕒 Следующий полив</p>
+        <p id="statNext" class="text-xl font-semibold">—</p>
+      </div>
+
     </div>
-{% endfor %}
-</div>
 
-{% endblock %}
+
+    <!-- ФОРМА ДОБАВЛЕНИЯ -->
+    <div id="formBlock" class="hidden bg-white p-6 rounded-xl shadow mb-6">
+
+      <input 
+        id="name"
+        placeholder="Название"
+        class="border p-2 rounded w-full mb-3">
+
+      <input 
+        id="location"
+        placeholder="Место"
+        class="border p-2 rounded w-full mb-3">
+
+      <input 
+        id="interval"
+        type="number"
+        placeholder="Интервал полива (дней)"
+        class="border p-2 rounded w-full mb-3">
+
+      <button onclick="addPlant()"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg">
+        Сохранить
+      </button>
+
+    </div>
+
+
+    <!-- ФОРМА РЕДАКТИРОВАНИЯ -->
+    <div id="editForm"
+      class="hidden bg-white p-6 rounded-xl shadow mb-6">
+
+      <input 
+        id="editName"
+        placeholder="Новое название"
+        class="border p-2 rounded w-full mb-3">
+
+      <button onclick="saveEdit()"
+        class="bg-yellow-600 text-white px-4 py-2 rounded-lg">
+        Сохранить изменения
+      </button>
+
+    </div>
+
+
+    <!-- СПИСОК РАСТЕНИЙ -->
+    <div id="plantsList" class="space-y-4"></div>
+
+  </div>
+
+
+  <script>
+
+    const API = "http://127.0.0.1:8000"
+    let currentEditId = null
+
+
+    function toggleForm() {
+      document.getElementById("formBlock").classList.toggle("hidden")
+    }
+
+
+    async function loadDashboard() {
+      const r = await fetch(`${API}/dashboard`)
+      const data = await r.json()
+
+      document.getElementById("statTotal").innerText = data.total_plants
+      document.getElementById("statWater").innerText = data.needs_watering
+      document.getElementById("statToday").innerText = data.watered_today
+      document.getElementById("statNext").innerText = data.next_watering || "-"
+    }
+
+
+    async function loadPlants(url = `${API}/plants`) {
+      const response = await fetch(url)
+      const plants = await response.json()
+
+      const container = document.getElementById("plantsList")
+      container.innerHTML = ""
+
+      plants.forEach(p => {
+        const card = document.createElement("div")
+
+        card.className = "bg-white p-5 rounded-xl shadow flex justify-between items-center"
+
+        card.innerHTML = `
+          <div>
+            <h2 class="text-xl font-semibold">${p.name}</h2>
+            <p class="text-gray-500">
+              ${p.needs_watering ?
+                "<span class='text-red-600 font-semibold'>Нужно полить!</span>"
+                :
+                p.days_left + " дней до полива"}
+            </p>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="waterPlant(${p.id})"
+              class="bg-blue-500 text-white px-3 py-2 rounded-lg">
+              💧
+            </button>
+
+            <button onclick="deletePlant(${p.id})"
+              class="bg-red-500 text-white px-3 py-2 rounded-lg">
+              🗑
+            </button>
+
+            <button onclick="openEditForm(${p.id}, '${p.name}')"
+              class="bg-yellow-500 text-white px-3 py-2 rounded-lg">
+              ✏️
+            </button>
+          </div>
+        `
+
+        container.appendChild(card)
+      })
+    }
+
+
+    async function addPlant() {
+      const name = document.getElementById("name").value
+      const location = document.getElementById("location").value
+      const interval = parseInt(document.getElementById("interval").value)
+
+      await fetch(`${API}/plants/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          location: location,
+          water_interval_days: interval
+        })
+      })
+
+      toggleForm()
+      loadPlants()
+      loadDashboard()
+    }
+
+
+    async function waterPlant(id) {
+      await fetch(`${API}/plants/${id}/water`, {
+        method: "POST"
+      })
+
+      loadPlants()
+      loadDashboard()
+    }
+
+
+    async function deletePlant(id) {
+      await fetch(`${API}/plants/${id}`, {
+        method: "DELETE"
+      })
+
+      loadPlants()
+      loadDashboard()
+    }
+
+
+    function openEditForm(id, name) {
+      currentEditId = id
+      document.getElementById("editName").value = name
+      document.getElementById("editForm").classList.remove("hidden")
+    }
+
+
+    async function saveEdit() {
+      const newName = document.getElementById("editName").value
+
+      await fetch(`${API}/plants/${currentEditId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: newName
+        })
+      })
+
+      document.getElementById("editForm").classList.add("hidden")
+      loadPlants()
+    }
+
+
+    function searchPlants() {
+      const q = document.getElementById("searchInput").value
+      loadPlants(`${API}/plants?search=${q}`)
+    }
+
+
+    function filterNeedsWater() {
+      loadPlants(`${API}/plants?needs_water=true`)
+    }
+
+
+    loadPlants()
+    loadDashboard()
+
+  </script>
+
+</body>
+</html>

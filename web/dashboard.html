@@ -1,0 +1,18 @@
+<h1>Dashboard</h1>
+
+<div id="stats"></div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+fetch(`${API}/dashboard`)
+  .then(r => r.json())
+  .then(data => {
+
+    document.getElementById("stats").innerHTML = `
+      <p>🌿 Всего растений: ${data.total_plants}</p>
+      <p>💧 Нужно полить: ${data.needs_watering}</p>
+      <p>📅 Полито сегодня: ${data.watered_today}</p>
+      <p>🕒 Ближайший полив: ${data.next_watering}</p>
+    `
+  })
+</script>
