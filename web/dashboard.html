@@ -2,6 +2,8 @@
 
 <div id="stats"></div>
 
+
+
 <script>
 const API = "http://127.0.0.1:8000";
 fetch(`${API}/dashboard`)
@@ -13,6 +15,28 @@ fetch(`${API}/dashboard`)
       <p>💧 Нужно полить: ${data.needs_watering}</p>
       <p>📅 Полито сегодня: ${data.watered_today}</p>
       <p>🕒 Ближайший полив: ${data.next_watering}</p>
+      <img src="/{{photo}}" width="120">
     `
   })
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+  fetch("/stats")
+    .then(res => res.json())
+    .then(data => {
+
+    new Chart(document.getElementById("chart"), {
+      type: "pie",
+      data: {
+      labels: ["Healthy", "Needs Water"],
+      datasets: [{
+      data: [
+      data.total_plants - data.needs_water,
+      data.needs_water
+      ]
+    }]
+    }
+    })
+
+    })
 </script>

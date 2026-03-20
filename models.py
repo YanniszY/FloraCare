@@ -4,6 +4,14 @@ from datetime import date, datetime
 from database import Base
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    telegram_id = Column(Integer, unique=True, nullable=False)
+
+
+
 class Plant(Base):
     __tablename__ = "plants"
 
@@ -23,6 +31,8 @@ class Plant(Base):
     nickname = Column(String)
     purchase_date = Column(Date)
     photo_path = Column(String)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
 
 
 class WateringLog(Base):

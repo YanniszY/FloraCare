@@ -4,7 +4,7 @@ from datetime import date
 
 from database import get_db
 from models import Plant, PlantHistory
-from services import plant_status
+from services.services import plant_status
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -45,3 +45,27 @@ def get_dashboard(db: Session = Depends(get_db)):
         "watered_today": watered_today,
         "next_watering": next_watering
     }
+
+
+
+@router.get("/stats")
+def get_stats(db: Session = Depends(get_db)):
+
+    total = db.query(Plant).count()
+
+    plants = db.query(Plant).all()
+
+    needs_water = 0
+
+    for p in plants:
+        status = plant_status(p)
+        if status["needs_watering"]:
+            needs_water += 1
+
+    return {
+        "total_plants": total,
+        "needs_water": needs_water
+    }
+
+
+
