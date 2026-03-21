@@ -1,0 +1,37 @@
+{
+  "hoya": {
+    "watering": "sparingly, allow soil to dry between waterings",
+    "light": "bright indirect sunlight",
+    "humidity": "medium",
+    "fertilizer": "once or twice in growing season",
+    "common_issues": ["soft leaves", "yellow leaves", "curling leaves"]
+  },
+  "monstera": {
+    "watering": "moderate, keep soil slightly moist",
+    "light": "bright indirect sunlight",
+    "humidity": "high",
+    "fertilizer": "every-2-4 weeks during growing season",
+    "common_issues": ["yellowing leaves", "root rot", "brown leaf tips"]
+  },
+  "areca_palm": {
+    "watering": "regularly, keep soil moist but not soggy",
+    "light": "bright filtered sunlight",
+    "humidity": "high",
+    "fertilizer": "monthly during spring and summer",
+    "common_issues": ["brown leaf tips", "spider mites", "sensitivity to fluoride"]
+  },
+  "parlor_palm": {
+    "watering": "moderate, allow top inch of soil to dry",
+    "light": "low to medium indirect light",
+    "humidity": "medium to high",
+    "fertilizer": "once a month in growing season",
+    "common_issues": ["yellowing fronds", "root rot from overwatering", "scale insects"]
+  },
+  "nephrolepis_fern": {
+    "watering": "frequently, keep soil consistently moist",
+    "light": "medium indirect light, avoids direct sun",
+    "humidity": "very high",
+    "fertilizer": "monthly with diluted liquid fertilizer",
+    "common_issues": ["leaf drop", "dry fronds", "susceptibility to dry air"]
+  }
+}

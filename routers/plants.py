@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy.orm import Session
 from datetime import date
 from schemas import PlantCreate, PlantUpdate
@@ -18,7 +20,10 @@ def add_plant(plant: PlantCreate, db: Session = Depends(get_db)):
         name=plant.name,
         location=plant.location,
         water_interval_days=plant.water_interval_days,
-        last_watered=plant.last_watered or date.today()
+        last_watered=plant.last_watered or date.today(),
+
+        nickname=plant.nickname,
+        notes=plant.notes
     )
 
     db.add(new_plant)
@@ -113,8 +118,22 @@ def edit_plant(
 
     if not plant:
         raise HTTPException(status_code=404, detail="Plant not found")
+    
+    if data.name is not None:
+        plant.name = data.name
 
-    plant.name = data.name
+    if data.location is not None:
+        plant.location = data.location
+
+    if data.water_interval_days is not None:
+        plant.water_interval_days = data.water_interval_days
+
+    if data.nickname is not None:
+        plant.nickname = data.nickname
+
+    if data.notes is not None:
+        plant.notes = data.notes
+
 
     history = PlantHistory(
         plant_id=plant.id,
@@ -235,4 +254,50 @@ def water_all_plants(db: Session = Depends(get_db)):
     return {
         "status": "watered",
         "updated": count
+    }
+
+
+
+@router.delete("/{plant_id}/photo")
+def delete_photo(plant_id: int, db: Session = Depends(get_db)):
+    plant = db.query(Plant).filter_by(id=plant_id).first()
+
+    if not plant:
+        raise HTTPException(status_code=404, detail="Plant not found")
+
+    if not plant.photo_path:
+        raise HTTPException(status_code=404, detail="No photo")
+
+    # Удалить файл с диска
+    if os.path.exists(plant.photo_path):
+        os.remove(plant.photo_path)
+
+    plant.photo_path = None
+    db.commit()
+
+    return {"status": "deleted"}
+
+
+
+
+@router.get("/{plant_id}")
+def get_one_plant(plant_id: int, db: Session = Depends(get_db)):
+    plant = db.query(Plant).filter_by(id=plant_id).first()
+    if not plant:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    
+    status = plant_status(plant)
+    
+    return {
+        "id": plant.id,
+        "name": plant.name,
+        "nickname": plant.nickname,
+        "location": plant.location,
+        "photo": plant.photo_path,
+        "notes": plant.notes,
+        "last_watered": plant.last_watered,
+        "water_interval_days": plant.water_interval_days,
+        "next_watering": status["next_watering"],
+        "days_left": status["days_left"],
+        "needs_watering": status["needs_watering"]
     }

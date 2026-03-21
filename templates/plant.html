@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantCare — Растение</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/plant.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="detail-page">
+
+<div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+
+<!-- SIDEBAR (такой же как на главной) -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <span class="logo-leaf">✦</span>
+        <span class="logo-text">PlantCare</span>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="/" class="nav-item">
+            <span class="nav-icon">❧</span>
+            <span>Все растения</span>
+        </a>
+        <a href="/" class="nav-item" id="nav-back">
+            <span class="nav-icon">←</span>
+            <span>Назад</span>
+        </a>
+    </nav>
+    <div class="sidebar-stats" style="margin-top:auto">
+        <div class="stat-card" style="grid-column:1/-1">
+            <div class="stat-value" id="sd-interval">—</div>
+            <div class="stat-label">дней между поливами</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value green" id="sd-total-waterings">—</div>
+            <div class="stat-label">всего поливов</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value accent" id="sd-days-left">—</div>
+            <div class="stat-label">дней до полива</div>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- HERO SECTION -->
+    <div class="plant-hero" id="plant-hero">
+
+        <!-- Фото / плейсхолдер -->
+        <div class="hero-photo-wrap" id="hero-photo-wrap">
+            <div class="hero-photo-placeholder" id="hero-photo-placeholder">🌿</div>
+        </div>
+
+        <!-- Инфо -->
+        <div class="hero-info">
+            <a href="/" class="back-link">← Все растения</a>
+
+            <div class="hero-status-badge" id="hero-status-badge"></div>
+
+            <h1 class="hero-name" id="hero-name">
+                <span class="skeleton-line" style="width:240px"></span>
+            </h1>
+            <div class="hero-nickname" id="hero-nickname"></div>
+            <div class="hero-location" id="hero-location"></div>
+            <div class="hero-notes"  id="hero-notes"></div>
+
+            <div class="hero-meta" id="hero-meta"></div>
+
+            <!-- Кнопки действий -->
+            <div class="hero-actions">
+                <button class="btn-hero-primary" id="btn-water" onclick="waterPlant()">
+                    <span>💧</span> Полить
+                </button>
+                <button class="btn-hero-secondary" id="btn-edit" onclick="openEditModal()">
+                    <span>✎</span> Изменить
+                </button>
+                <button class="btn-hero-secondary" onclick="uploadPhoto()">
+                    <span>📷</span> Фото
+                </button>
+                <button class="btn-hero-danger" onclick="deletePlant()">
+                    <span>✕</span> Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS SECTION -->
+    <div class="charts-section">
+
+        <div class="section-header">
+            <h2 class="section-title">Аналитика поливов</h2>
+            <p class="section-sub">На основе истории событий</p>
+        </div>
+
+        <div class="charts-grid">
+
+            <!-- График 1: История поливов 30 дней -->
+            <div class="chart-card chart-wide">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-title">Поливы за последние 30 дней</div>
+                        <div class="chart-sub">Каждый столбик — один день</div>
+                    </div>
+                    <div class="chart-legend">
+                        <span class="legend-dot" style="background:var(--sage)"></span> полив
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="chart-activity"></canvas>
+                </div>
+            </div>
+
+            <!-- График 2: Интервал между поливами -->
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-title">Интервал между поливами</div>
+                        <div class="chart-sub">Дней между каждым поливом</div>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="chart-interval"></canvas>
+                </div>
+            </div>
+
+            <!-- График 3: По дням недели -->
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <div class="chart-title">По дням недели</div>
+                        <div class="chart-sub">Когда чаще поливаешь</div>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="chart-weekday"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HISTORY SECTION -->
+    <div class="history-section">
+        <div class="section-header">
+            <h2 class="section-title">История событий</h2>
+        </div>
+        <div class="history-timeline" id="history-timeline">
+            <div class="loading-state"><div class="loading-spinner"></div></div>
+        </div>
+    </div>
+
+</main>
+
+<!-- MODAL: РЕДАКТИРОВАТЬ -->
+<div class="modal-overlay hidden" id="modal-edit">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Редактировать растение</h2>
+            <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+        </div>
+        <form class="modal-form" onsubmit="submitEdit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="e-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Прозвище</label>
+                    <input type="text" id="e-nickname">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Расположение</label>
+                    <input type="text" id="e-location">
+                </div>
+                <div class="form-group">
+                    <label>Поливать каждые (дней)</label>
+                    <input type="number" id="e-interval" min="1" max="365">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="e-notes"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal('modal-edit')">Отмена</button>
+                <button type="submit" class="btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="/static/plant.js"></script>
+</body>
+</html>

@@ -3,3 +3,28 @@ __pycache__/
 plants.db
 venv/
 .env
+
+# Python
+__pycache__/
+routers/__pycache__
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+
+# OS
+.DS_Store
+
+# Temp files
+temp/
+
+# Models (ВАЖНО!)
+app/ai/models/
+
+# Memory / user data
+app/data/
+
+# Logs
+*.log

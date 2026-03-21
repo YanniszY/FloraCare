@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantCare — Мои растения</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <span class="logo-leaf">✦</span>
+        <span class="logo-text">PlantCare</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="/" class="nav-item active">
+            <span class="nav-icon">❧</span>
+            <span>Все растения</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-needs-water" onclick="filterNeedsWater(event)">
+            <span class="nav-icon">💧</span>
+            <span>Нужен полив</span>
+            <span class="nav-badge" id="needs-water-count">0</span>
+        </a>
+        <a href="#" class="nav-item" onclick="openAddModal(event)">
+            <span class="nav-icon">＋</span>
+            <span>Добавить</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-stats">
+        <div class="stat-card">
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-label">растений</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value accent" id="stat-needs">—</div>
+            <div class="stat-label">нужен полив</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value green" id="stat-today">—</div>
+            <div class="stat-label">полито сегодня</div>
+        </div>
+    </div>
+
+    <div class="water-all-wrap">
+        <button class="btn-water-all" onclick="waterAll()">
+            <span>💧</span> Полить все
+        </button>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1 class="page-title" id="page-title">Мои растения</h1>
+            <span class="plant-count" id="plant-count-label"></span>
+        </div>
+        <div class="topbar-right">
+            <div class="search-wrap">
+                <span class="search-icon">⌕</span>
+                <input type="text" class="search-input" placeholder="Поиск по названию..." id="search-input">
+            </div>
+            <div class="view-toggle">
+                <button class="view-btn active" id="view-grid" onclick="setView('grid')">⊞</button>
+                <button class="view-btn" id="view-list" onclick="setView('list')">☰</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLANTS GRID -->
+    <div class="plants-grid" id="plants-container">
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Загружаем растения...</p>
+        </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state hidden" id="empty-state">
+        <div class="empty-icon">🌱</div>
+        <h2>Пока пусто</h2>
+        <p>Добавьте первое растение чтобы начать</p>
+        <button class="btn-primary" onclick="openAddModal()">Добавить растение</button>
+    </div>
+</main>
+
+
+<!-- MODAL: ДОБАВИТЬ / РЕДАКТИРОВАТЬ -->
+<div class="modal-overlay hidden" id="modal-plant">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modal-title">Новое растение</h2>
+            <button class="modal-close" onclick="closeModal('modal-plant')">✕</button>
+        </div>
+        <form class="modal-form" id="plant-form" onsubmit="submitPlant(event)">
+            <input type="hidden" id="edit-plant-id">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="f-name" placeholder="Фикус Бенджамина" required>
+                </div>
+                <div class="form-group">
+                    <label>Прозвище</label>
+                    <input type="text" id="f-nickname" placeholder="Фёдор">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Расположение</label>
+                    <input type="text" id="f-location" placeholder="Подоконник кухни">
+                </div>
+                <div class="form-group">
+                    <label>Поливать каждые (дней) *</label>
+                    <input type="number" id="f-interval" placeholder="7" min="1" max="365" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="f-notes" placeholder="Любит солнце, не любит сквозняки..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal('modal-plant')">Отмена</button>
+                <button type="submit" class="btn-primary" id="form-submit-btn">Добавить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- MODAL: ИСТОРИЯ -->
+<div class="modal-overlay hidden" id="modal-history">
+    <div class="modal modal-sm">
+        <div class="modal-header">
+            <h2 class="modal-title" id="history-title">История</h2>
+            <button class="modal-close" onclick="closeModal('modal-history')">✕</button>
+        </div>
+        <div class="history-list" id="history-list">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+
+<script src="/static/app.js"></script>
+</body>
+</html>
