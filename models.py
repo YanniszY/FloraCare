@@ -51,3 +51,27 @@ class PlantHistory(Base):
     plant_id = Column(Integer, ForeignKey("plants.id"))
     action = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# --- AI Chat models ---
+
+class Chat(Base):
+    """Один чат пользователя. У одного юзера может быть много чатов."""
+    __tablename__ = "chats"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    title = Column(String, default="Новый чат")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class Message(Base):
+    """Одно сообщение внутри чата. role = 'user' или 'assistant'."""
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    chat_id = Column(Integer, ForeignKey("chats.id"), nullable=False)
+    role = Column(String, nullable=False)   # "user" | "assistant"
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

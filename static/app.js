@@ -508,3 +508,204 @@ function showToast(message, type = 'success') {
 function todayStr() {
     return new Date().toISOString().split('T')[0];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// ── AI чат ──────────────────────────────────────────────
+
+let selectedPlantId = null;
+let selectedPlantName = "Общий режим";
+let attachedPhoto = null;      // base64 строка
+let attachedPhotoFile = null;  // File объект
+
+// Загрузить список растений в сайдбар
+async function loadPlantList() {
+    const listEl = document.getElementById("plant-list");
+    if (!listEl) return;
+
+    const res = await fetch("/plants");
+    const plants = await res.json();
+
+    listEl.innerHTML = plants.map(p => `
+        <div class="plant-option" data-id="${p.id}" data-name="${p.name}" onclick="selectPlant(this)">
+            <span class="plant-icon">🌿</span>
+            <span>${p.name}</span>
+        </div>
+    `).join("");
+}
+
+// Выбрать растение как контекст
+function selectPlant(el) {
+    document.querySelectorAll(".plant-option").forEach(o => o.classList.remove("active"));
+    el.classList.add("active");
+
+    selectedPlantId   = el.dataset.id   || null;
+    selectedPlantName = el.dataset.name || "Общий режим";
+
+    document.getElementById("chat-context").textContent = selectedPlantName;
+}
+
+// Прикрепить фото
+function handlePhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    attachedPhotoFile = file;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        attachedPhoto = e.target.result; // data:image/...;base64,...
+        document.getElementById("preview-img").src = attachedPhoto;
+        document.getElementById("photo-preview").style.display = "flex";
+    };
+    reader.readAsDataURL(file);
+}
+
+function removePhoto() {
+    attachedPhoto = null;
+    attachedPhotoFile = null;
+    document.getElementById("photo-preview").style.display = "none";
+    document.getElementById("photo-input").value = "";
+}
+
+// Отправить сообщение
+async function sendMessage() {
+    const input   = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+    const text    = input.value.trim();
+
+    if (!text && !attachedPhoto) return;
+
+    // Показать сообщение пользователя
+    appendMessage("user", text, attachedPhoto);
+
+    const userText  = text;
+    const userPhoto = attachedPhoto;
+
+    input.value = "";
+    input.style.height = "auto";
+    removePhoto();
+    sendBtn.disabled = true;
+
+    // Показать typing
+    const typingEl = appendTyping();
+
+    try {
+        let responseText;
+
+        if (userPhoto) {
+            // Отправляем на /analyze с фото
+            const formData = new FormData();
+            formData.append("file", attachedPhotoFile);
+            if (userText)          formData.append("question", userText);
+            if (selectedPlantId)   formData.append("plant_id", selectedPlantId);
+
+            const res  = await fetch("http://localhost:8001/analyze", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            responseText = data.result || data.message || JSON.stringify(data);
+
+        } else {
+            // Отправляем на /chat
+            const res  = await fetch("http://localhost:8001/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message:  userText,
+                    plant_id: selectedPlantId || undefined
+                })
+            });
+            const data = await res.json();
+            responseText = data.response || data.message || JSON.stringify(data);
+        }
+
+        typingEl.remove();
+        appendMessage("bot", responseText);
+
+    } catch (err) {
+        typingEl.remove();
+        appendMessage("bot", "Что-то пошло не так, попробуй ещё раз 🌿");
+    }
+
+    sendBtn.disabled = false;
+}
+
+// Добавить сообщение в чат
+function appendMessage(role, text, photoSrc = null) {
+    const container = document.getElementById("chat-messages");
+    const isBot     = role === "bot";
+
+    const div = document.createElement("div");
+    div.className = `message ${isBot ? "bot-message" : "user-message"}`;
+
+    div.innerHTML = `
+        <div class="message-avatar">${isBot ? "🤖" : "🧑"}</div>
+        <div class="message-bubble">
+            ${photoSrc ? `<img src="${photoSrc}" alt="фото">` : ""}
+            ${text ? `<span>${text}</span>` : ""}
+        </div>
+    `;
+
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return div;
+}
+
+// Typing индикатор
+function appendTyping() {
+    const container = document.getElementById("chat-messages");
+    const div = document.createElement("div");
+    div.className = "message bot-message typing";
+    div.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-bubble">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    `;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return div;
+}
+
+// Enter отправляет, Shift+Enter — новая строка
+function handleKey(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+}
+
+// Автоматически растягивать textarea
+function autoResize(el) {
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+}
+
+// Очистить чат
+function clearChat() {
+    const container = document.getElementById("chat-messages");
+    container.innerHTML = `
+        <div class="message bot-message">
+            <div class="message-avatar">🤖</div>
+            <div class="message-bubble">Чат очищен. Чем могу помочь? 🌿</div>
+        </div>
+    `;
+}
+
+// Запустить при загрузке страницы /ai
+if (document.getElementById("plant-list")) {
+    loadPlantList();
+}

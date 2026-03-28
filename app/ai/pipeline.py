@@ -34,8 +34,7 @@ def analyze_plant(image_path: str):
 Тип растения: {plant_type}
 Симптомы: {clip_results}
 Возможные проблемы: {disease_summary}
-Информация по уходу:
-{care_text}
+Информация по уходу: {care_text}
 
 Пример хорошего ответа:
 The leaves are soft — this is usually a sign of overwatering. The soil is too wet and roots may start to rot.
