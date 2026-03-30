@@ -8,9 +8,11 @@ app/ai/llm.py
 
 import requests
 from typing import Optional
+import os
 
-OLLAMA_URL = "http://localhost:11434/api/chat"
-OLLAMA_GENERATE_URL = "http://localhost:11434/api/generate"
+
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434") + "/api/chat"
+OLLAMA_GENERATE_URL = os.getenv("OLLAMA_URL", "http://localhost:11434") + "/api/generate"
 MODEL = "llama3"
 
 

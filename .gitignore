@@ -1,30 +1,47 @@
-__pycache__/
-*.pyc
-plants.db
-venv/
-.env
-
 # Python
 __pycache__/
-routers/__pycache__
-__pycache__
 *.pyc
 *.pyo
 *.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Виртуальное окружение
+venv/
 .venv/
 env/
 
-# OS
+# База данных
+*.db
+*.sqlite3
+
+
+
+# Временные файлы
+temp/
+*.jpg
+*.jpeg
+*.png
+*.gif
+uploads/*
+!uploads/.gitkeep
+
+# AI модели
+app/data/user_memory.json
+
+# Docker
+.dockerignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
 .DS_Store
 
-# Temp files
-temp/
-
-# Models (ВАЖНО!)
-app/ai/models/
-
-# Memory / user data
-app/data/
-
-# Logs
+# Логи
 *.log

@@ -110,10 +110,6 @@ def detect_plant_type(image_path: str):
 # === Plant disease MobileNetV2 ===
 disease_model_path = "app/ai/models/mobilenetv2_plant.pth"
 
-# Загрузка классов
-#with open("app/ai/models/class_names.json", "r") as f:
-#    CLASS_NAMES = json.load(f)
-
 
 
 # === СОЗДАЁМ МОДЕЛЬ ===
@@ -141,13 +137,6 @@ preprocess = transforms.Compose([
 ])
 
 
-# Загружаем модель
-# model_mobilenet.load_state_dict(
-#     torch.load(disease_model_path, map_location="cpu"),
-#     strict=False
-# )
-# model_mobilenet.load_state_dict(torch.load(disease_model_path, map_location="cpu"))
-# model_mobilenet.eval()
 
 # Предобработка
 preprocess = transforms.Compose([

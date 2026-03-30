@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi import Request
+from starlette.requests import Request
 
 from sqlalchemy.orm import Session
 from models import User
@@ -61,14 +62,16 @@ app.add_middleware(
 
 @app.get("/")
 def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request, "index.html")
 
 
 @app.get("/plants/{plant_id}/view")
 def plant_detail(plant_id: int, request: Request):
-    return templates.TemplateResponse("plant.html", {"request": request})
+    return templates.TemplateResponse(request, "plant.html")
+    # return templates.TemplateResponse("plant.html", {"request": request})
 
 
 @app.get("/ai")
 def ai_page(request: Request):
-    return templates.TemplateResponse("ai-chat.html", {"request": request})
+    return templates.TemplateResponse(request, "ai-chat.html")
+    # return templates.TemplateResponse("ai-chat.html", {"request": request})
