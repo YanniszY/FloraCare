@@ -16,6 +16,7 @@ from app.ai.pipeline import analyze_plant
 from app.ai.llm import ask_llm_chat
 from app.data.memory import get_chat_history, save_message, build_user_context_text
 
+
 router = APIRouter()
 
 os.makedirs("temp", exist_ok=True)
@@ -42,6 +43,10 @@ class CreateChatRequest(BaseModel):
     title: str = "Новый чат"
 
 class SendMessageRequest(BaseModel):
+    user_id: int
+    text: str
+
+class AskRequest(BaseModel):
     user_id: int
     text: str
 
@@ -118,3 +123,17 @@ async def analyze(file: UploadFile):
         if os.path.exists(path):
             os.remove(path)
     return {"result": result}
+
+
+
+
+
+@router.post("/ask")
+def ask_once(body: AskRequest, db: Session = Depends(get_db)):
+    user_context = build_user_context_text(body.user_id, db)
+    system = SYSTEM_PROMPT + f"\n\nРастения пользователя:\n{user_context}"
+    answer = ask_llm_chat(
+        messages=[{"role": "user", "content": body.text}],
+        system=system
+    )
+    return {"answer": answer}

@@ -23,7 +23,8 @@ def add_plant(plant: PlantCreate, db: Session = Depends(get_db)):
         last_watered=plant.last_watered or date.today(),
 
         nickname=plant.nickname,
-        notes=plant.notes
+        notes=plant.notes,
+        user_id=1
     )
 
     db.add(new_plant)

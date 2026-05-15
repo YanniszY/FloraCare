@@ -45,7 +45,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(plants.router)
 app.include_router(dashboard.router)
-app.include_router(ai.router) 
+app.include_router(ai.router, prefix="/ai")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
