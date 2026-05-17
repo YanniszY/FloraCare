@@ -1,4 +1,4 @@
-```markdown
+
 # 🌿 FloraCare — Smart Plant Monitoring & AI Diagnostics Ecosystem
 
 FloraCare is a comprehensive full-stack ecosystem designed to automate plant care, monitor health metrics, and diagnose plant diseases using Artificial Intelligence. The project consists of a responsive Web Application and a Telegram Bot companion for instant notifications and quick AI consultations.
