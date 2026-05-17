@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantCare — Растение</title>
+    <title>PlantCare — Plant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
@@ -26,25 +26,25 @@
     <nav class="sidebar-nav">
         <a href="/" class="nav-item">
             <span class="nav-icon">❧</span>
-            <span>Все растения</span>
+            <span>All Plants</span>
         </a>
         <a href="/" class="nav-item" id="nav-back">
             <span class="nav-icon">←</span>
-            <span>Назад</span>
+            <span>Back</span>
         </a>
     </nav>
     <div class="sidebar-stats" style="margin-top:auto">
         <div class="stat-card" style="grid-column:1/-1">
             <div class="stat-value" id="sd-interval">—</div>
-            <div class="stat-label">дней между поливами</div>
+            <div class="stat-label">days between waterings</div>
         </div>
         <div class="stat-card">
             <div class="stat-value green" id="sd-total-waterings">—</div>
-            <div class="stat-label">всего поливов</div>
+            <div class="stat-label">total waterings</div>
         </div>
         <div class="stat-card">
             <div class="stat-value accent" id="sd-days-left">—</div>
-            <div class="stat-label">дней до полива</div>
+            <div class="stat-label">days until watering</div>
         </div>
     </div>
 </aside>
@@ -62,7 +62,7 @@
 
         <!-- Инфо -->
         <div class="hero-info">
-            <a href="/" class="back-link">← Все растения</a>
+            <a href="/" class="back-link">← All Plants</a>
 
             <div class="hero-status-badge" id="hero-status-badge"></div>
 
@@ -78,16 +78,16 @@
             <!-- Кнопки действий -->
             <div class="hero-actions">
                 <button class="btn-hero-primary" id="btn-water" onclick="waterPlant()">
-                    <span>💧</span> Полить
+                    <span>💧</span> Water
                 </button>
                 <button class="btn-hero-secondary" id="btn-edit" onclick="openEditModal()">
-                    <span>✎</span> Изменить
+                    <span>✎</span> Edit
                 </button>
                 <button class="btn-hero-secondary" onclick="uploadPhoto()">
-                    <span>📷</span> Фото
+                    <span>📷</span> Photo
                 </button>
                 <button class="btn-hero-danger" onclick="deletePlant()">
-                    <span>✕</span> Удалить
+                    <span>✕</span> Delete
                 </button>
             </div>
         </div>
@@ -97,21 +97,21 @@
     <div class="charts-section">
 
         <div class="section-header">
-            <h2 class="section-title">Аналитика поливов</h2>
-            <p class="section-sub">На основе истории событий</p>
+            <h2 class="section-title">Watering Analytics</h2>
+            <p class="section-sub">Based on event history</p>
         </div>
 
         <div class="charts-grid">
 
-            <!-- График 1: История поливов 30 дней -->
+            <!-- Chart 1: Watering history 30 days -->
             <div class="chart-card chart-wide">
                 <div class="chart-card-header">
                     <div>
-                        <div class="chart-title">Поливы за последние 30 дней</div>
-                        <div class="chart-sub">Каждый столбик — один день</div>
+                        <div class="chart-title">Waterings over the last 30 days</div>
+                        <div class="chart-sub">Each bar represents one day</div>
                     </div>
                     <div class="chart-legend">
-                        <span class="legend-dot" style="background:var(--sage)"></span> полив
+                        <span class="legend-dot" style="background:var(--sage)"></span> watered
                     </div>
                 </div>
                 <div class="chart-wrap">
@@ -119,12 +119,12 @@
                 </div>
             </div>
 
-            <!-- График 2: Интервал между поливами -->
+            <!-- Chart 2: Interval between waterings -->
             <div class="chart-card">
                 <div class="chart-card-header">
                     <div>
-                        <div class="chart-title">Интервал между поливами</div>
-                        <div class="chart-sub">Дней между каждым поливом</div>
+                        <div class="chart-title">Interval between waterings</div>
+                        <div class="chart-sub">Days between each watering</div>
                     </div>
                 </div>
                 <div class="chart-wrap">
@@ -132,12 +132,12 @@
                 </div>
             </div>
 
-            <!-- График 3: По дням недели -->
+            <!-- Chart 3: By day of week -->
             <div class="chart-card">
                 <div class="chart-card-header">
                     <div>
-                        <div class="chart-title">По дням недели</div>
-                        <div class="chart-sub">Когда чаще поливаешь</div>
+                        <div class="chart-title">By day of week</div>
+                        <div class="chart-sub">When you water most often</div>
                     </div>
                 </div>
                 <div class="chart-wrap">
@@ -151,7 +151,7 @@
     <!-- HISTORY SECTION -->
     <div class="history-section">
         <div class="section-header">
-            <h2 class="section-title">История событий</h2>
+            <h2 class="section-title">Event History</h2>
         </div>
         <div class="history-timeline" id="history-timeline">
             <div class="loading-state"><div class="loading-spinner"></div></div>
@@ -164,37 +164,37 @@
 <div class="modal-overlay hidden" id="modal-edit">
     <div class="modal">
         <div class="modal-header">
-            <h2 class="modal-title">Редактировать растение</h2>
+            <h2 class="modal-title">Edit Plant</h2>
             <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
         </div>
         <form class="modal-form" onsubmit="submitEdit(event)">
             <div class="form-row">
                 <div class="form-group">
-                    <label>Название *</label>
+                    <label>Name *</label>
                     <input type="text" id="e-name" required>
                 </div>
                 <div class="form-group">
-                    <label>Прозвище</label>
+                    <label>Nickname</label>
                     <input type="text" id="e-nickname">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Расположение</label>
+                    <label>Location</label>
                     <input type="text" id="e-location">
                 </div>
                 <div class="form-group">
-                    <label>Поливать каждые (дней)</label>
+                    <label>Water every (days)</label>
                     <input type="number" id="e-interval" min="1" max="365">
                 </div>
             </div>
             <div class="form-group">
-                <label>Заметки</label>
+                <label>Notes</label>
                 <textarea id="e-notes"></textarea>
             </div>
             <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="closeModal('modal-edit')">Отмена</button>
-                <button type="submit" class="btn-primary">Сохранить</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
+                <button type="submit" class="btn-primary">Save</button>
             </div>
         </form>
     </div>

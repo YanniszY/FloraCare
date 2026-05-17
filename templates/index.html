@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantCare — Мои растения</title>
+    <title>PlantCare — My Plants</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
@@ -26,20 +26,20 @@
     <nav class="sidebar-nav">
         <a href="/" class="nav-item active">
             <span class="nav-icon">❧</span>
-            <span>Все растения</span>
+            <span>All Plants</span>
         </a>
         <a href="#" class="nav-item" id="nav-needs-water" onclick="filterNeedsWater(event)">
             <span class="nav-icon">💧</span>
-            <span>Нужен полив</span>
+            <span>Needs Water</span>
             <span class="nav-badge" id="needs-water-count">0</span>
         </a>
         <a href="#" class="nav-item" onclick="openAddModal(event)">
             <span class="nav-icon">＋</span>
-            <span>Добавить</span>
+            <span>Add Plant</span>
         </a>
 
         <div class="nav-links">
-            <a href="/ai" class="btn-ai">🤖 AI помощник</a>
+            <a href="/ai" class="btn-ai">🤖 AI Assistant</a>
 
         </div>
     </nav>
@@ -47,21 +47,21 @@
     <div class="sidebar-stats">
         <div class="stat-card">
             <div class="stat-value" id="stat-total">—</div>
-            <div class="stat-label">растений</div>
+            <div class="stat-label">plants</div>
         </div>
         <div class="stat-card">
             <div class="stat-value accent" id="stat-needs">—</div>
-            <div class="stat-label">нужен полив</div>
+            <div class="stat-label">need water</div>
         </div>
         <div class="stat-card">
             <div class="stat-value green" id="stat-today">—</div>
-            <div class="stat-label">полито сегодня</div>
+            <div class="stat-label">watered today</div>
         </div>
     </div>
 
     <div class="water-all-wrap">
         <button class="btn-water-all" onclick="waterAll()">
-            <span>💧</span> Полить все
+            <span>💧</span> Water All
         </button>
     </div>
 </aside>
@@ -72,13 +72,13 @@
     <!-- TOPBAR -->
     <div class="topbar">
         <div class="topbar-left">
-            <h1 class="page-title" id="page-title">Мои растения</h1>
+            <h1 class="page-title" id="page-title">My Plants</h1>
             <span class="plant-count" id="plant-count-label"></span>
         </div>
         <div class="topbar-right">
             <div class="search-wrap">
                 <span class="search-icon">⌕</span>
-                <input type="text" class="search-input" placeholder="Поиск по названию..." id="search-input">
+                <input type="text" class="search-input" placeholder="Search by name..." id="search-input">
             </div>
             <div class="view-toggle">
                 <button class="view-btn active" id="view-grid" onclick="setView('grid')">⊞</button>
@@ -91,16 +91,16 @@
     <div class="plants-grid" id="plants-container">
         <div class="loading-state">
             <div class="loading-spinner"></div>
-            <p>Загружаем растения...</p>
+            <p>Loading plants...</p>
         </div>
     </div>
 
     <!-- EMPTY STATE -->
     <div class="empty-state hidden" id="empty-state">
         <div class="empty-icon">🌱</div>
-        <h2>Пока пусто</h2>
-        <p>Добавьте первое растение чтобы начать</p>
-        <button class="btn-primary" onclick="openAddModal()">Добавить растение</button>
+        <h2>Nothing here yet</h2>
+        <p>Add your first plant to get started</p>
+        <button class="btn-primary" onclick="openAddModal()">Add Plant</button>
     </div>
 </main>
 
@@ -109,7 +109,7 @@
 <div class="modal-overlay hidden" id="modal-plant">
     <div class="modal">
         <div class="modal-header">
-            <h2 class="modal-title" id="modal-title">Новое растение</h2>
+            <h2 class="modal-title" id="modal-title">New Plant</h2>
             <button class="modal-close" onclick="closeModal('modal-plant')">✕</button>
         </div>
         <form class="modal-form" id="plant-form" onsubmit="submitPlant(event)">
@@ -117,34 +117,34 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Название *</label>
-                    <input type="text" id="f-name" placeholder="Фикус Бенджамина" required>
+                    <label>Name *</label>
+                    <input type="text" id="f-name" placeholder="Ficus Benjamina" required>
                 </div>
                 <div class="form-group">
-                    <label>Прозвище</label>
-                    <input type="text" id="f-nickname" placeholder="Фёдор">
+                    <label>Nickname</label>
+                    <input type="text" id="f-nickname" placeholder="Freddy">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Расположение</label>
-                    <input type="text" id="f-location" placeholder="Подоконник кухни">
+                    <label>Location</label>
+                    <input type="text" id="f-location" placeholder="Kitchen windowsill">
                 </div>
                 <div class="form-group">
-                    <label>Поливать каждые (дней) *</label>
+                    <label>Water every (days) *</label>
                     <input type="number" id="f-interval" placeholder="7" min="1" max="365" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Заметки</label>
-                <textarea id="f-notes" placeholder="Любит солнце, не любит сквозняки..."></textarea>
+                <label>Notes</label>
+                <textarea id="f-notes" placeholder="Loves sunlight, hates drafts..."></textarea>
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="closeModal('modal-plant')">Отмена</button>
-                <button type="submit" class="btn-primary" id="form-submit-btn">Добавить</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('modal-plant')">Cancel</button>
+                <button type="submit" class="btn-primary" id="form-submit-btn">Add</button>
             </div>
         </form>
     </div>
@@ -155,7 +155,7 @@
 <div class="modal-overlay hidden" id="modal-history">
     <div class="modal modal-sm">
         <div class="modal-header">
-            <h2 class="modal-title" id="history-title">История</h2>
+            <h2 class="modal-title" id="history-title">History</h2>
             <button class="modal-close" onclick="closeModal('modal-history')">✕</button>
         </div>
         <div class="history-list" id="history-list">

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Помощник — PlantCare</title>
+<title>AI Assistant — PlantCare</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -587,37 +587,37 @@
   </div>
 
   <a class="nav-item" href="/">
-    <span class="nav-icon">🪴</span> Все растения
+    <span class="nav-icon">🪴</span> All Plants
   </a>
   <a class="nav-item" href="/">
-    <span class="nav-icon">💧</span> Нужен полив
+    <span class="nav-icon">💧</span> Needs Water
   </a>
   <a class="nav-item" href="/">
-    <span class="nav-icon">＋</span> Добавить
+    <span class="nav-icon">＋</span> Add Plant
   </a>
   <a class="nav-item active" href="/ai">
-    <span class="nav-icon">🤖</span> AI помощник
+    <span class="nav-icon">🤖</span> AI Assistant
   </a>
 
   <div class="nav-spacer"></div>
 
   <div class="nav-stats">
     <strong>0</strong>
-    растений
+    plants
   </div>
 </nav>
 
 <!-- CHAT SIDEBAR -->
 <aside class="chat-sidebar">
   <div class="chat-sidebar-header">
-    <div class="chat-sidebar-title">Чаты</div>
+    <div class="chat-sidebar-title">Chats</div>
     <button class="btn-new-chat" onclick="createChat()">
-      ＋ Новый чат
+      ＋ New Chat
     </button>
   </div>
   <div class="chat-list" id="chatList">
     <div class="chat-empty" id="chatListEmpty">
-      Чатов пока нет.<br>Начни новый разговор!
+      No chats yet.<br>Start a new conversation!
     </div>
   </div>
 </aside>
@@ -628,8 +628,8 @@
   <!-- No chat selected -->
   <div class="no-chat-selected" id="noChatSelected">
     <div class="no-chat-selected-icon">🌱</div>
-    <h3>Выбери или создай чат</h3>
-    <p>Спрашивай про уход за растениями или отправь фото для анализа</p>
+    <h3>Select or create a chat</h3>
+    <p>Ask about plant care or send a photo for diagnosis</p>
   </div>
 
   <!-- Active chat -->
@@ -637,7 +637,7 @@
 
     <div class="chat-topbar">
       <span>🤖</span>
-      <span class="chat-topbar-title" id="chatTitle">AI Помощник</span>
+      <span class="chat-topbar-title" id="chatTitle">AI Assistant</span>
       <span class="chat-topbar-sub" id="chatSub">llama3 · Ollama</span>
     </div>
 
@@ -646,28 +646,28 @@
     <div class="input-area">
 
       <div class="analyze-banner" id="analyzeBanner">
-        🔍 <span>Фото будет проанализировано моделью определения болезней</span>
+        🔍 <span>Photo will be analyzed by the plant disease detection model</span>
       </div>
 
       <div class="image-preview-wrap" id="imagePreview">
         <img class="image-preview-thumb" id="previewThumb" src="" alt="">
         <span class="image-preview-name" id="previewName"></span>
-        <button class="image-preview-remove" onclick="removeImage()" title="Убрать фото">✕</button>
+        <button class="image-preview-remove" onclick="removeImage()" title="Remove photo">✕</button>
       </div>
 
       <div class="input-box">
         <textarea
           class="input-textarea"
           id="messageInput"
-          placeholder="Спроси про растение..."
+          placeholder="Ask about a plant..."
           rows="1"
           onkeydown="handleKey(event)"
           oninput="autoResize(this)"
         ></textarea>
         <div class="input-actions">
           <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
-          <button class="btn-icon" title="Прикрепить фото" onclick="document.getElementById('fileInput').click()">📎</button>
-          <button class="btn-send" id="sendBtn" onclick="sendMessage()" title="Отправить">
+          <button class="btn-icon" title="Attach photo" onclick="document.getElementById('fileInput').click()">📎</button>
+          <button class="btn-send" id="sendBtn" onclick="sendMessage()" title="Send">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -675,7 +675,7 @@
           </button>
         </div>
       </div>
-      <div class="input-hint">Enter — отправить · Shift+Enter — новая строка</div>
+      <div class="input-hint">Enter — send · Shift+Enter — new line</div>
     </div>
 
   </div>
@@ -685,7 +685,7 @@
 <script>
 // ── CONFIG ──
 const API_BASE = 'http://localhost:8000/ai';
-const USER_ID  = 1; // заменить на реальный ID из сессии
+const USER_ID  = 1; // replace with real session ID
 
 // ── STATE ──
 let chats       = [];
@@ -729,14 +729,14 @@ function renderChatList() {
     item.dataset.id = chat.id;
 
     const date = new Date(chat.updated_at || chat.created_at);
-    const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    const dateStr = date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 
     item.innerHTML = `
       <div class="chat-item-text">
-        <div class="chat-item-title">${escHtml(chat.title || 'Новый чат')}</div>
+        <div class="chat-item-title">${escHtml(chat.title || 'New Chat')}</div>
         <div class="chat-item-date">${dateStr}</div>
       </div>
-      <button class="chat-item-delete" onclick="deleteChat(event, ${chat.id})" title="Удалить">✕</button>
+      <button class="chat-item-delete" onclick="deleteChat(event, ${chat.id})" title="Delete">✕</button>
     `;
     item.addEventListener('click', () => openChat(chat.id));
     list.appendChild(item);
@@ -749,14 +749,14 @@ async function createChat() {
     const res = await fetch(`${API_BASE}/chats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: USER_ID, title: 'Новый чат' })
+      body: JSON.stringify({ user_id: USER_ID, title: 'New Chat' })
     });
     const chat = await res.json();
     chats.unshift(chat);
     renderChatList();
     openChat(chat.id);
   } catch (e) {
-    alert('Не удалось создать чат');
+    alert('Failed to create chat');
   }
 }
 
@@ -769,7 +769,7 @@ async function openChat(chatId) {
   view.style.display = 'flex';
 
   const chat = chats.find(c => c.id === chatId);
-  document.getElementById('chatTitle').textContent = chat?.title || 'AI Помощник';
+  document.getElementById('chatTitle').textContent = chat?.title || 'AI Assistant';
 
   renderChatList(); // update active state
 
@@ -802,13 +802,13 @@ function renderEmptyChat(container) {
   container.innerHTML = `
     <div class="empty-chat">
       <div class="empty-chat-icon">🌿</div>
-      <h3>Чем могу помочь?</h3>
-      <p>Спроси про уход за растением или прикрепи фото для диагностики</p>
+      <h3>How can I help?</h3>
+      <p>Ask about plant care or attach a photo for diagnosis</p>
       <div class="empty-suggestions">
-        <button class="suggestion-chip" onclick="useSuggestion('Почему желтеют листья у моей хойи?')">🍂 Желтеют листья</button>
-        <button class="suggestion-chip" onclick="useSuggestion('Как часто поливать монстеру?')">💧 Полив монстеры</button>
-        <button class="suggestion-chip" onclick="useSuggestion('Что делать если растение вянет?')">🥀 Растение вянет</button>
-        <button class="suggestion-chip" onclick="useSuggestion('Как повысить влажность для растений дома?')">💨 Влажность воздуха</button>
+        <button class="suggestion-chip" onclick="useSuggestion('Why are my hoya leaves turning yellow?')">🍂 Yellowing leaves</button>
+        <button class="suggestion-chip" onclick="useSuggestion('How often should I water a monstera?')">💧 Watering monstera</button>
+        <button class="suggestion-chip" onclick="useSuggestion('What to do if my plant is wilting?')">🥀 Wilting plant</button>
+        <button class="suggestion-chip" onclick="useSuggestion('How to increase humidity for indoor plants?')">💨 Air humidity</button>
       </div>
     </div>
   `;
@@ -838,7 +838,7 @@ async function sendMessage() {
   if (empty) empty.remove();
 
   // Show user message
-  const displayText = text || '📷 Отправил фото для анализа';
+  const displayText = text || '📷 Sent a photo for analysis';
   // Сохраняем данные файла ДО того как очищаем
   const fileDataUrl = pendingFile ? pendingFile.dataUrl : null;
   const fileBlob    = pendingFile ? pendingFile.blob : null;
@@ -868,9 +868,9 @@ async function sendMessage() {
       const formData = new FormData();
       formData.append('file', fileBlob, fileName);
 
-      console.log('Отправляю на /analyze...');
+      console.log('Sending to /analyze...');
       const res = await fetch(`${API_BASE}/analyze`, { method: 'POST', body: formData });
-      console.log('Статус ответа:', res.status);
+      console.log('Response status:', res.status);
       const data = await res.json();
       console.log('Ответ:', data);
       answer = data.result;
@@ -896,15 +896,15 @@ async function sendMessage() {
 
     // Update chat title in sidebar
     const chat = chats.find(c => c.id === activeChatId);
-    if (chat && chat.title === 'Новый чат') {
-      chat.title = (text || 'Анализ фото').slice(0, 40) + (text.length > 40 ? '...' : '');
+    if (chat && chat.title === 'New Chat') {
+      chat.title = (text || 'Photo analysis').slice(0, 40) + (text.length > 40 ? '...' : '');
       document.getElementById('chatTitle').textContent = chat.title;
       renderChatList();
     }
 
   } catch (e) {
     typingEl.remove();
-    appendMessage('assistant', '⚠️ Не удалось получить ответ. Проверь подключение к серверу.', true);
+    appendMessage('assistant', '⚠️ Failed to get a response. Check server connection.', true);
   }
 
   isLoading = false;
@@ -921,13 +921,13 @@ function appendMessage(role, content, animate = true, imageUrl = null) {
   if (!animate) wrapper.style.animation = 'none';
 
   const now = new Date();
-  const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-  const avatarContent = role === 'user' ? 'Я' : '🌿';
+  const avatarContent = role === 'user' ? 'Me' : '🌿';
 
   let imgHtml = '';
   if (imageUrl) {
-    imgHtml = `<img class="msg-image" src="${imageUrl}" alt="фото растения">`;
+    imgHtml = `<img class="msg-image" src="${imageUrl}" alt="plant photo">`;
   }
 
   wrapper.innerHTML = `
@@ -960,7 +960,7 @@ function appendTyping() {
 // ── DELETE CHAT ──
 async function deleteChat(e, chatId) {
   e.stopPropagation();
-  if (!confirm('Удалить этот чат?')) return;
+  if (!confirm('Delete this chat?')) return;
 
   try {
     await fetch(`${API_BASE}/chats/${chatId}`, { method: 'DELETE' });
@@ -974,7 +974,7 @@ async function deleteChat(e, chatId) {
 
     renderChatList();
   } catch {
-    alert('Не удалось удалить чат');
+    alert('Failed to delete chat');
   }
 }
 
@@ -983,12 +983,12 @@ function handleFile(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-    console.log('Файл выбран:', file.name);
+    console.log('File selected:', file.name);
 
     const reader = new FileReader();
     reader.onload = ev => {
       pendingFile = { blob: file, name: file.name, dataUrl: ev.target.result };
-      console.log('pendingFile установлен:', pendingFile.name);
+      console.log('pendingFile set:', pendingFile.name);
 
     document.getElementById('previewThumb').src = ev.target.result;
     document.getElementById('previewName').textContent = file.name;
